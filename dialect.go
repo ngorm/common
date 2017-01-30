@@ -19,7 +19,7 @@ type DefaultForeignKeyNamer struct {
 var _c dialects.Dialect = &Dialect{}
 
 type Dialect struct {
-	db model.SQLCommon
+	DB model.SQLCommon
 	DefaultForeignKeyNamer
 }
 
@@ -28,7 +28,7 @@ func (Dialect) GetName() string {
 }
 
 func (s *Dialect) SetDB(db model.SQLCommon) {
-	s.db = db
+	s.DB = db
 }
 
 func (Dialect) BindVar(i int) string {
@@ -94,12 +94,12 @@ func (Dialect) DataTypeOf(field *model.StructField) (string, error) {
 
 func (s Dialect) HasIndex(tableName string, indexName string) bool {
 	var count int
-	s.db.QueryRow("SELECT count(*) FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema = ? AND table_name = ? AND index_name = ?", s.CurrentDatabase(), tableName, indexName).Scan(&count)
+	s.DB.QueryRow("SELECT count(*) FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema = ? AND table_name = ? AND index_name = ?", s.CurrentDatabase(), tableName, indexName).Scan(&count)
 	return count > 0
 }
 
 func (s Dialect) RemoveIndex(tableName string, indexName string) error {
-	_, err := s.db.Exec(fmt.Sprintf("DROP INDEX %v", indexName))
+	_, err := s.DB.Exec(fmt.Sprintf("DROP INDEX %v", indexName))
 	return err
 }
 
@@ -109,18 +109,18 @@ func (s Dialect) HasForeignKey(tableName string, foreignKeyName string) bool {
 
 func (s Dialect) HasTable(tableName string) bool {
 	var count int
-	s.db.QueryRow("SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = ? AND table_name = ?", s.CurrentDatabase(), tableName).Scan(&count)
+	s.DB.QueryRow("SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = ? AND table_name = ?", s.CurrentDatabase(), tableName).Scan(&count)
 	return count > 0
 }
 
 func (s Dialect) HasColumn(tableName string, columnName string) bool {
 	var count int
-	s.db.QueryRow("SELECT count(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = ? AND table_name = ? AND column_name = ?", s.CurrentDatabase(), tableName, columnName).Scan(&count)
+	s.DB.QueryRow("SELECT count(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = ? AND table_name = ? AND column_name = ?", s.CurrentDatabase(), tableName, columnName).Scan(&count)
 	return count > 0
 }
 
 func (s Dialect) CurrentDatabase() (name string) {
-	s.db.QueryRow("SELECT DATABASE()").Scan(&name)
+	s.DB.QueryRow("SELECT DATABASE()").Scan(&name)
 	return
 }
 
