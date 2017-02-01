@@ -149,8 +149,9 @@ func (Dialect) LastInsertIDReturningSuffix(tableName, columnName string) string 
 func (Dialect) PrimaryKey(keys []string) string {
 	return ""
 }
+
 func (Dialect) QueryFieldName(name string) string {
-	return ""
+	return name + "."
 }
 func (DefaultForeignKeyNamer) BuildForeignKeyName(tableName, field, dest string) string {
 	keyName := fmt.Sprintf("%s_%s_%s_foreign", tableName, field, dest)
