@@ -10,6 +10,7 @@ import (
 
 	"github.com/ngorm/ngorm/dialects"
 	"github.com/ngorm/ngorm/model"
+	"github.com/ngorm/ngorm/util"
 )
 
 // DefaultForeignKeyNamer contains the default foreign key name generator method
@@ -36,7 +37,12 @@ func (Dialect) BindVar(i int) string {
 }
 
 func (Dialect) Quote(key string) string {
-	return fmt.Sprintf(`"%s"`, key)
+	buf := util.B.Get()
+	defer util.B.Put(buf)
+	buf.WriteRune('"')
+	buf.WriteString(key)
+	buf.WriteRune('"')
+	return buf.String()
 }
 
 func (Dialect) DataTypeOf(field *model.StructField) (string, error) {
